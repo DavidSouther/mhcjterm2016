@@ -88,6 +88,14 @@ class ListViewTest(TestCase):
         response = self.client.get('/lists/%d/' % (correct_list.id,))
         self.assertEqual(response.context['list'], correct_list)
 
+    def test_has_delete_links(self):
+        new_list = List.objects.create()
+        new_item = Item.objects.create(text='itemey 1', list=new_list)
+
+        response = self.client.get('/lists/%d/' % (new_list.id,))
+
+        self.assertContains(response, '/items/%d/remove' % (new_item.id,))
+
 class DeleteItemTest(TestCase):
     def test_redirects_to_list_view(self):
         list_ = List.objects.create()
