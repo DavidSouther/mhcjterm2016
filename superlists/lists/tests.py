@@ -62,7 +62,6 @@ class NewItemTest(TestCase):
         self.assertRedirects(response, '/lists/%d/' % (correct_list.id,))
 
 class ListViewTest(TestCase):
-
     def test_uses_list_template(self):
         new_list = List.objects.create()
         response = self.client.get('/lists/%d/' % (new_list.id,))
@@ -88,6 +87,29 @@ class ListViewTest(TestCase):
         correct_list = List.objects.create()
         response = self.client.get('/lists/%d/' % (correct_list.id,))
         self.assertEqual(response.context['list'], correct_list)
+
+class DeleteItemTest(TestCase):
+    def test_redirects_to_list_view(self):
+        list_ = List.objects.create()
+        item1 = Item.objects.create(text="Item 1", list=list_)
+        item2 = Item.objects.create(text="Item 2", list=list_)
+
+        response = self.client.get(
+            '/items/%d/remove' % (item1.id),
+        )
+
+        self.assertRedirects(response, '/lists/%d/' % (list_.id,))
+
+    def test_deletes_item(self):
+        list_ = List.objects.create()
+        item1 = Item.objects.create(text="Item 1", list=list_)
+        item2 = Item.objects.create(text="Item 2", list=list_)
+
+        self.client.get(
+            '/items/%d/remove' % (item1.id),
+        )
+
+        self.assertEqual(Item.objects.count(), 1)
 
 class ItemAndListModelsTest(TestCase):
     def test_saving_and_retrieving_items_in_list(self):
