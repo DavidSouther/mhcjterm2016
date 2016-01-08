@@ -85,3 +85,20 @@ class NewVisitorTest(LiveServerTestCase):
         self.assertIn('Buy milk', page_text)
 
         # Satisfied, they both go back to sleep.
+
+    def test_can_start_and_finish_list_items(self):
+        # Edith has hobby time this weekend, and wants to follow a list.
+        # She goes to the homepage, and adds a couple items to the list.
+        self.browser.get(self.live_server_url)
+        self.enter_a_new_item('Buy peacock feathers')
+        self.enter_a_new_item('Make a fly')
+
+        # Edith goes to the store. When she returns, she marks off her list.
+        todo_item_table = self.browser.find_element_by_id('id_list_table')
+        todo_dones = todo_item_table.find_elements_by_tag_name('a')
+        todo_dones[0].click()
+
+        # She sees that her first item is no longer in the list.
+        page_text = self.browser.find_element_by_tag_name('body').text
+        self.assertNotIn('Buy peacock feathers', page_text)
+        self.assertIn('Make a fly', page_text)
