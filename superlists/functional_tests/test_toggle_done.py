@@ -1,14 +1,19 @@
 from .base import TodoFunctionalTest
 from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
 
 class ToggleDoneTest(TodoFunctionalTest):
     def toggle_todo_done(self, todo_text):
         row = self.find_table_row(todo_text)
         row.find_element_by_tag_name('input').click()
-        self.browser.find_element_by_id('toggle_done')
+        self.browser.find_element_by_id('toggle_done').click()
 
     def check_marked_off(self, todo_text):
-        pass
+        row = self.find_table_row(todo_text)
+        try:
+            row.find_element_by_css_selector('.todo-done')
+        except NoSuchElementException:
+            self.fail("'%s' not marked done!" % (todo_text))
 
     def test_can_toggle_finished_items(self):
         # Edith makes a quick shopping list,
@@ -24,7 +29,9 @@ class ToggleDoneTest(TodoFunctionalTest):
         # At the store, Edith puts the feathers in her cart
         # and marks them done on the todo list.
         self.toggle_todo_done('Buy peacock feathers')
+        self.check_marked_off('Buy peacock feathers')
         self.toggle_todo_done('Buy fishing line')
+        self.check_marked_off('Buy fishing line')
 
         # Edith returns home, re-opens her todo list,
         # And sees that her shopping list is still marked

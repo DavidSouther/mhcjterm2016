@@ -10,14 +10,16 @@
   >
     <table id="id_list_table" class="table">
       {% for item in list.item_set.all %}
-        <tr>
+        <tr id="item_{{ item.id }}">
           <td>{{ forloop.counter }}.</td>
           <td>
             <input type="checkbox"
               name="mark_item_done"
               value="{{ item.id }}" />
           </td>
-          <td>{{ item.text }}</td>
+          <td {% if item.is_done %}class="todo-done"{% endif %}>
+            {{ item.text }}
+          </td>
         </tr>
       {% endfor %}
     </table>
