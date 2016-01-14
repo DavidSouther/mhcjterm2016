@@ -3,9 +3,10 @@ from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 
 class ToggleDoneTest(TodoFunctionalTest):
-    def toggle_todo_done(self, todo_text):
-        row = self.find_table_row(todo_text)
-        row.find_element_by_tag_name('input').click()
+    def toggle_todo_done(self, todo_text_list):
+        for todo_text in todo_text_list:
+            row = self.find_table_row(todo_text)
+            row.find_element_by_tag_name('input').click()
         self.browser.find_element_by_id('toggle_done').click()
 
     def check_marked_off(self, todo_text):
@@ -28,9 +29,12 @@ class ToggleDoneTest(TodoFunctionalTest):
 
         # At the store, Edith puts the feathers in her cart
         # and marks them done on the todo list.
-        self.toggle_todo_done('Buy peacock feathers')
+        self.toggle_todo_done([
+            'Buy peacock feathers',
+            'Buy fishing line'
+        ])
+
         self.check_marked_off('Buy peacock feathers')
-        self.toggle_todo_done('Buy fishing line')
         self.check_marked_off('Buy fishing line')
 
         # Edith returns home, re-opens her todo list,
@@ -49,5 +53,5 @@ class ToggleDoneTest(TodoFunctionalTest):
         self.check_marked_off('Buy peacock feathers')
         self.check_marked_off('Buy fishing line')
 
-        self.toggle_todo_done('Tie some flys')
+        self.toggle_todo_done( ['Tie some flys'] )
         self.check_marked_off('Tie some flys')
